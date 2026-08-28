@@ -275,6 +275,18 @@ implementation — found by actually inspecting the data, not by reading the spe
 > `now()` — otherwise every account would show zero tickets regardless of the
 > linkage issue above.
 
+One deliberate interpretation call, flagged rather than hidden: the brief says
+to justify each risk flag with "a direct quote from the ticket." Given the
+account-linkage gap above, most accounts have no ticket to quote from at all —
+and `accounts.json`'s `escalation_notes` field exists specifically (per the
+dataset's own README) "to test churn-risk signal detection." So
+`_is_grounded()` accepts a verbatim quote from **either** a ticket **or** an
+escalation note, not tickets only — the grounding guarantee (no fabricated
+quotes) is what actually matters; the source field is secondary. Every
+`RiskFlag` still records `source_ticket_id` (`null` when the quote came from
+an escalation note instead), so the distinction is never hidden from the
+output.
+
 ## Eval results
 
 Real run, committed as [`eval_report.md`](eval_report.md) / [`eval_report.json`](eval_report.json):
@@ -396,7 +408,7 @@ workers behind a load balancer, orthogonal to anything task-specific here.
 |---|---|
 | Thin UI demo (+5) | ✅ Built as **React 19 + Vite + Tailwind v4** instead of the suggested Streamlit/Gradio — same brief ("a non-technical TAM could actually use it"), chosen for a more production-realistic frontend/backend split. See [`ui/frontend`](ui/frontend). |
 | Prompt versioning (+2) | ✅ Each prompt lives in `app/prompts/<task>_v<n>.py` with a `VERSION` constant and a changelog docstring — a prompt change is a new version, not a silent edit. |
-| CI eval gate (+2) | ✅ [`.github/workflows/eval.yml`](.github/workflows/eval.yml) runs `python -m eval.harness` on every push, using a `GROQ_API_KEY` repo secret. |
+| CI eval gate (+2) | ✅ [`.github/workflows/eval.yml`](.github/workflows/eval.yml) runs `python -m eval.harness` on every push, using a `GROQ_API_KEY` repo secret. `main()` exits non-zero if fewer than `EVAL_MIN_PASSED` cases pass or `avg_quality` drops below `EVAL_MIN_AVG_QUALITY` (defaults: 6/10, 0.6) — so CI actually fails on a real regression, not just on a crash. |
 | Streaming (+3) | ❌ Not claimed. Prototyped, then deliberately removed — it split classification and draft-generation into two calls for a UX benefit that didn't justify the added complexity once the React UI made a single response feel instant anyway. |
 
 ## Notes on the API key

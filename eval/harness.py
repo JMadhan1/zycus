@@ -8,6 +8,8 @@ is the rule pass rate; if the judge ran, it's averaged in. Run:
     python -m eval.harness
 """
 import json
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -19,6 +21,13 @@ from eval import judge
 
 ROOT = Path(__file__).resolve().parent.parent
 JUDGE_ENABLED = bool(GROQ_API_KEY)
+
+# Quality gate — main() exits 1 below these, so CI actually fails on a real
+# regression instead of just "the script didn't crash." Real baseline is
+# 8/10 passed, 0.916 avg quality; thresholds sit below that with margin so
+# the gate isn't brittle to the 2 known judgment-call non-passes.
+EVAL_MIN_PASSED = int(os.environ.get("EVAL_MIN_PASSED", "6"))
+EVAL_MIN_AVG_QUALITY = float(os.environ.get("EVAL_MIN_AVG_QUALITY", "0.6"))
 
 
 def _score(checks: dict[str, bool]) -> float:
@@ -171,6 +180,7 @@ def main():
     all_results = triage_results + account_results
     n_passed = sum(1 for r in all_results if r["passed"])
     avg_quality = round(sum(r["quality_score"] for r in all_results) / len(all_results), 3)
+    gate_passed = n_passed >= EVAL_MIN_PASSED and avg_quality >= EVAL_MIN_AVG_QUALITY
 
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -180,6 +190,8 @@ def main():
             "passed": n_passed,
             "failed": len(all_results) - n_passed,
             "avg_quality_score": avg_quality,
+            "gate_passed": gate_passed,
+            "gate_thresholds": {"min_passed": EVAL_MIN_PASSED, "min_avg_quality": EVAL_MIN_AVG_QUALITY},
         },
         "determinism_check_task2": determinism,
         "task1_triage_results": triage_results,
@@ -191,6 +203,16 @@ def main():
     print(f"Passed {n_passed}/{len(all_results)} cases. Avg quality {avg_quality}. "
           f"Report written to eval_report.json / eval_report.md")
 
+    if not gate_passed:
+        print(
+            f"QUALITY GATE FAILED: need >= {EVAL_MIN_PASSED} passed and "
+            f">= {EVAL_MIN_AVG_QUALITY} avg quality (got {n_passed} passed, {avg_quality} avg)."
+        )
+        if not JUDGE_ENABLED:
+            print("GROQ_API_KEY is not set for this run — that's almost certainly why every "
+                  "LLM-backed case failed. Set it as a repo secret for CI to run for real.")
+        sys.exit(1)
+
 
 def _write_markdown(report: dict):
     lines = [
@@ -201,6 +223,10 @@ def _write_markdown(report: dict):
         "",
         f"**{report['summary']['passed']}/{report['summary']['total_cases']} cases passed** "
         f"(avg quality score: {report['summary']['avg_quality_score']})",
+        "",
+        f"Quality gate: {'PASSED' if report['summary']['gate_passed'] else 'FAILED'} "
+        f"(requires >= {report['summary']['gate_thresholds']['min_passed']} passed and "
+        f">= {report['summary']['gate_thresholds']['min_avg_quality']} avg quality)",
         "",
         f"Determinism check (Task 2, same input twice): "
         f"{'SKIPPED (no API key)' if report['determinism_check_task2'].get('skipped') else report['determinism_check_task2'].get('identical')}",
