@@ -75,6 +75,8 @@ cd ui/frontend && npm install && npm run dev            # terminal 2 — http://
 
 ## How it works
 
+### System architecture
+
 ```mermaid
 flowchart LR
     T[Raw ticket]
@@ -111,6 +113,79 @@ flowchart LR
     API --> UI["React UI"]
     API --> Eval["eval.harness<br/>rule-based + LLM-as-judge"]
 ```
+
+### Task 1 — ticket triage, request to response
+
+```mermaid
+sequenceDiagram
+    participant U as React UI
+    participant API as FastAPI · /triage
+    participant KB as kb_retrieval.py<br/>(local TF-IDF)
+    participant Cache as content-hash cache
+    participant LLM as Groq · gpt-oss-20b
+
+    U->>API: POST /triage {subject, body, product?, plan_tier?}
+    API->>KB: retrieve(subject + body, top_k=3)
+    KB-->>API: ranked KB chunks + relevance scores
+    API->>Cache: lookup(hash(model, temp, seed, prompt))
+    alt cache hit
+        Cache-->>API: cached classification JSON
+    else cache miss
+        API->>LLM: classify + draft response<br/>(JSON mode, temperature=0, seed=42)
+        LLM-->>API: raw JSON
+        API->>Cache: store(hash, JSON)
+    end
+    API-->>U: TriageOutput — urgency, category,<br/>kb_match, responder team, draft response
+```
+
+### Task 2 — account brief, request to response
+
+```mermaid
+sequenceDiagram
+    participant U as React UI
+    participant API as FastAPI · /accounts/{id}/brief
+    participant Data as data_loader.py
+    participant Cache as content-hash cache
+    participant LLM as Groq · gpt-oss-20b
+    participant Ground as _is_grounded() check
+
+    U->>API: GET /accounts/ACC-1785/brief
+    API->>Data: get_account(id) + get_account_tickets(id, 90d)
+    Note right of Data: 90-day window anchored to the<br/>dataset's own latest ticket, not now()
+    Data-->>API: account fields + matching tickets
+    API->>Cache: lookup(hash(model, temp, seed, prompt))
+    alt cache hit
+        Cache-->>API: cached brief JSON
+    else cache miss
+        API->>LLM: summarize + flag risks<br/>(JSON mode, temperature=0, seed=42)
+        LLM-->>API: raw JSON — summary, risks, talking points
+        API->>Cache: store(hash, JSON)
+    end
+    API->>Ground: for each risk, is evidence_quote a verbatim<br/>substring of ticket/escalation-note text?
+    Ground-->>API: risks with fabricated quotes dropped
+    API-->>U: AccountBrief
+```
+
+### Eval harness flow
+
+```mermaid
+flowchart TD
+    Cases["cases_triage.json<br/>cases_account_brief.json<br/>10 cases, 5+/task, ≥1 adversarial/task"] --> Run["harness.py — run each case"]
+    Run --> P1["triage_ticket()"]
+    Run --> P2["account_health_brief()"]
+    P1 --> R1["Rule checks:<br/>schema · enum · expected value · KB match"]
+    P2 --> R2["Rule checks:<br/>risk count · grounded quotes · sparse-data ack"]
+    R1 --> Gate{"GROQ_API_KEY set?"}
+    R2 --> Gate
+    Gate -- yes --> Judge["LLM-as-judge<br/>scores 0.0-1.0, pass ≥ 0.6"]
+    Gate -- no --> Skip["quality_score = rule pass-rate only<br/>(judge skipped, noted in report)"]
+    Judge --> Report["eval_report.json / eval_report.md<br/>pass/fail + quality_score per case"]
+    Skip --> Report
+    Run --> Det["run_determinism_check()<br/>same account brief, called twice"]
+    Det --> Report
+```
+
+### Repo structure
 
 ```
 app/
