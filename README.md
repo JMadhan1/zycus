@@ -12,8 +12,18 @@
 </p>
 
 <p align="center">
+  <a href="https://zycus.jmadhan.me"><img alt="Live demo" src="https://img.shields.io/badge/%E2%97%8F%20LIVE%20DEMO-zycus.jmadhan.me-ff8a3d?style=for-the-badge&labelColor=0b0b0d"></a>
+</p>
+
+<p align="center">
   <b>US Delivery Internship — Technical Task Round</b><br/>
   Ticket triage, TAM account briefs, an eval harness, and a design note — built and verified end-to-end against the provided mock dataset.
+</p>
+
+<p align="center">
+  <b><a href="https://zycus.jmadhan.me">🔴 Try it live → zycus.jmadhan.me</a></b>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  frontend on Vercel, backend on <a href="https://zycus-support-ai-api.onrender.com/health">Render</a> — both deployed, both real
 </p>
 
 <p align="center">
@@ -70,6 +80,42 @@ cd ui/frontend && npm install && npm run dev            # terminal 2 — http://
 | `GET` | `/accounts/{account_id}/brief` | `?window_days=90` | `AccountBrief` |
 | `GET` | `/accounts` | — | `[{account_id, company}, ...]` |
 | `GET` | `/stats` | — | `{tickets, accounts, kb_docs}` |
+| `GET` | `/health` | — | `{"status": "ok"}` — Render's health check |
+
+</details>
+
+## Deployment
+
+Live, not just documented — frontend and backend are two separate deployed
+services (see [architecture](#system-architecture) for why they're split):
+
+| | |
+|---|---|
+| **Frontend** | [zycus.jmadhan.me](https://zycus.jmadhan.me) — React build on Vercel, `ui/frontend` as root directory, `VITE_API_BASE_URL` pointed at the Render backend |
+| **Backend** | [zycus-support-ai-api.onrender.com](https://zycus-support-ai-api.onrender.com/health) — FastAPI on Render, deployed from [Madhan098/zycus](https://github.com/Madhan098/zycus) (a backend-only mirror of `app/`, `eval/`, and `starter-repo/` — Render's `render.yaml` blueprint reads it directly) |
+
+CORS on the backend is scoped to exactly the deployed frontend origin via the
+`ALLOWED_ORIGINS` env var (`app/api.py`) — not wildcarded — verified live:
+
+```bash
+curl -I https://zycus-support-ai-api.onrender.com/stats -H "Origin: https://zycus.jmadhan.me"
+# access-control-allow-origin: https://zycus.jmadhan.me
+```
+
+<details>
+<summary><b>Redeploying from scratch</b></summary>
+
+**Backend (Render):** push `app/`, `eval/`, `requirements.txt`, `render.yaml`,
+`starter-repo/` to a repo, then [dashboard.render.com/blueprints](https://dashboard.render.com/blueprints)
+→ New Blueprint Instance → connect it. Set `GROQ_API_KEY` and `ALLOWED_ORIGINS`
+in the dashboard (both marked `sync: false` in `render.yaml`, so neither is
+ever committed). Render env var changes need a redeploy to take effect — if
+CORS looks stale right after saving a var, trigger **Manual Deploy → Deploy
+latest commit** rather than waiting.
+
+**Frontend (Vercel):** import the main repo, set **Root Directory** to
+`ui/frontend`, set `VITE_API_BASE_URL` to the Render URL above (no trailing
+slash). `ui/frontend/vercel.json` handles the build command and SPA rewrite.
 
 </details>
 

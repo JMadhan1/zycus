@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -9,14 +11,23 @@ from app.triage import triage_ticket
 
 app = FastAPI(title="Zycus Support AI", version="1.0")
 
-# Dev-only: allows the Vite React UI (ui/frontend, localhost:5173) to call this
-# API directly. Not a production CORS policy.
+# Local Vite dev origins are always allowed; add the deployed frontend's
+# origin (e.g. https://your-app.vercel.app, no trailing slash) via the
+# ALLOWED_ORIGINS env var (comma-separated for more than one) once deployed —
+# see the README's Deployment section.
+_default_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+_extra_origins = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=_default_origins + _extra_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 
 @app.get("/accounts")
