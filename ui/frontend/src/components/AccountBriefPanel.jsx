@@ -37,7 +37,8 @@ export function AccountBriefPanel() {
 
   return (
     <div className="grid gap-5 lg:grid-cols-[260px_minmax(0,1fr)]">
-      <div className="animate-fade-up flex max-h-[640px] flex-col rounded-lg border border-border bg-surface">
+      <div className="bracket animate-fade-up flex max-h-[640px] flex-col rounded-lg border border-border bg-surface">
+        <span className="bracket-bl" /><span className="bracket-br" />
         <div className="border-b border-border px-4 py-3.5">
           <p className="mb-2.5 text-[13px] font-medium text-ink-0">Accounts</p>
           <div className="relative">
@@ -56,14 +57,16 @@ export function AccountBriefPanel() {
               key={a.account_id}
               onClick={() => select(a)}
               className={`flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-[13px] transition ${
-                selected?.account_id === a.account_id ? "bg-surface-raised text-ink-0" : "text-ink-2 hover:bg-surface-raised/60 hover:text-ink-0"
+                selected?.account_id === a.account_id
+                  ? "border border-radar/30 bg-radar/[0.08] text-ink-0"
+                  : "border border-transparent text-ink-2 hover:bg-surface-raised/60 hover:text-ink-0"
               }`}
             >
               <span>
                 <span className="block font-medium">{a.company}</span>
                 <span className="font-mono-tight block text-[11px] text-ink-4">{a.account_id}</span>
               </span>
-              {selected?.account_id === a.account_id && <ArrowRight size={12} className="text-signal" />}
+              {selected?.account_id === a.account_id && <ArrowRight size={12} className="text-radar" />}
             </button>
           ))}
           {filtered.length === 0 && <p className="px-2.5 py-4 text-[13px] text-ink-4">No matches.</p>}
@@ -79,7 +82,8 @@ export function AccountBriefPanel() {
           <div className="rounded-lg border border-p1/30 bg-p1/[0.06] p-5 text-[13px] text-p1">{error}</div>
         )}
         {brief && !loading && (
-          <div className="animate-fade-up space-y-5 rounded-lg border border-border bg-surface">
+          <div className="bracket animate-fade-up space-y-5 rounded-lg border border-border bg-surface">
+            <span className="bracket-bl" /><span className="bracket-br" />
             <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
               <div>
                 <h3 className="text-[15px] font-semibold text-ink-0">{brief.company}</h3>
@@ -127,7 +131,7 @@ export function AccountBriefPanel() {
                 <ul className="space-y-2">
                   {brief.talking_points.map((tp, i) => (
                     <li key={i} className="flex gap-2.5 text-[13px] leading-relaxed text-ink-1">
-                      <span className="font-mono-tight mt-0.5 text-ink-4">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="font-mono-tight mt-0.5 text-radar">{String(i + 1).padStart(2, "0")}</span>
                       <span>{tp}</span>
                     </li>
                   ))}

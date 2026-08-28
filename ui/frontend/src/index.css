@@ -21,6 +21,11 @@
   --color-signal: #ff8a3d;
   --color-signal-dim: #a85a28;
 
+  /* Second accent — cyan, for "live/scanning" system state, distinct from
+     the amber urgency motif. Ties the console to a radar/ops metaphor:
+     the product's own mark is a target, the domain is triage/monitoring. */
+  --color-radar: #22d3ee;
+
   --color-p1: #ff5c5c;
   --color-p2: #ff8a3d;
   --color-p3: #e8c547;
@@ -62,6 +67,69 @@
     background: var(--color-border-hover);
     border-radius: 999px;
   }
+
+  /* Corner-bracket panel — a targeting-reticle frame instead of a plain
+     border, the visual signature of the "mission control" direction. */
+  .bracket {
+    position: relative;
+  }
+  .bracket::before,
+  .bracket::after,
+  .bracket .bracket-bl,
+  .bracket .bracket-br {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+  }
+  .bracket::before {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid var(--color-radar);
+    border-left: 2px solid var(--color-radar);
+  }
+  .bracket::after {
+    top: -1px;
+    right: -1px;
+    border-top: 2px solid var(--color-radar);
+    border-right: 2px solid var(--color-radar);
+  }
+  .bracket .bracket-bl {
+    bottom: -1px;
+    left: -1px;
+    border-bottom: 2px solid var(--color-radar);
+    border-left: 2px solid var(--color-radar);
+  }
+  .bracket .bracket-br {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid var(--color-radar);
+    border-right: 2px solid var(--color-radar);
+  }
+
+  .radar-sweep {
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      color-mix(in oklab, var(--color-radar) 10%, transparent) 18deg,
+      transparent 40deg,
+      transparent 360deg
+    );
+    animation: spin 14s linear infinite;
+  }
+
+  .scanline {
+    background: linear-gradient(
+      180deg,
+      transparent,
+      color-mix(in oklab, var(--color-radar) 5%, transparent) 45%,
+      color-mix(in oklab, var(--color-radar) 9%, transparent) 50%,
+      color-mix(in oklab, var(--color-radar) 5%, transparent) 55%,
+      transparent
+    );
+    animation: sweep 9s linear infinite;
+  }
 }
 
 @keyframes fade-up {
@@ -84,4 +152,21 @@
 }
 .animate-blink {
   animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sweep {
+  0% { top: -140px; }
+  100% { top: 100%; }
+}
+
+@keyframes ping {
+  0% { transform: scale(0.7); opacity: 0.9; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.animate-ping-ring {
+  animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 }

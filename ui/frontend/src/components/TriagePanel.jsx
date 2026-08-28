@@ -67,9 +67,13 @@ export function TriagePanel() {
 
   return (
     <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-      <form onSubmit={handleSubmit} className="animate-fade-up rounded-lg border border-border bg-surface">
+      <form onSubmit={handleSubmit} className="bracket animate-fade-up rounded-lg border border-border bg-surface">
+        <span className="bracket-bl" /><span className="bracket-br" />
         <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
-          <span className="text-[13px] font-medium text-ink-0">New ticket</span>
+          <span className="flex items-center gap-2">
+            <span className="text-[13px] font-medium text-ink-0">New ticket</span>
+            <span className="font-mono-tight text-[10px] text-ink-4">CH.01</span>
+          </span>
           <div className="flex gap-1">
             {PRESETS.map((p) => (
               <button
@@ -148,7 +152,8 @@ export function TriagePanel() {
           <EmptyState icon={<Loader2 size={20} className="animate-spin" />} text="Classifying against the knowledge base…" />
         )}
         {result && (
-          <div className="animate-fade-up space-y-4 rounded-lg border border-border bg-surface">
+          <div className="bracket animate-fade-up space-y-4 rounded-lg border border-border bg-surface">
+            <span className="bracket-bl" /><span className="bracket-br" />
             <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
               <div>
                 <div className="mb-2 flex items-center gap-2">
@@ -167,13 +172,13 @@ export function TriagePanel() {
               </Row>
 
               {result.kb_match ? (
-                <div className="rounded-md border border-border bg-canvas px-3.5 py-3">
+                <div className="rounded-md border border-radar/30 bg-radar/[0.06] px-3.5 py-3">
                   <div className="mb-1 flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-ink-3">
+                    <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-radar">
                       <BookOpen size={12} /> knowledge-base match
                     </span>
-                    <span className="font-mono-tight text-[11px] text-ink-3">
-                      {Math.round(result.kb_match.relevance_score * 100)}%
+                    <span className="font-mono-tight text-[11px] text-ink-4">
+                      {Math.round(result.kb_match.relevance_score * 100)}% relevance
                     </span>
                   </div>
                   <p className="font-mono-tight text-[13px] text-ink-0">{result.kb_match.doc_path}</p>

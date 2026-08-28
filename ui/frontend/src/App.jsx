@@ -18,17 +18,23 @@ export default function App() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-canvas">
+    <div className="relative min-h-screen overflow-hidden bg-canvas">
       <div className="bg-grid pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div
+        className="radar-sweep pointer-events-none absolute -right-56 -top-56 h-[560px] w-[560px] rounded-full"
+        aria-hidden="true"
+      />
+      <div className="scanline pointer-events-none absolute left-0 right-0 h-[140px]" aria-hidden="true" />
       <div className="relative mx-auto max-w-6xl px-6">
         <header className="flex items-center justify-between border-b border-border py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-signal/15 text-signal">
+            <div className="relative flex h-7 w-7 items-center justify-center rounded bg-signal/15 text-signal">
+              <span className="animate-ping-ring pointer-events-none absolute -inset-1.5 rounded-full border border-radar/35" />
               <Target size={15} strokeWidth={2.4} />
             </div>
             <div className="leading-none">
               <p className="font-mono-tight text-[13px] font-medium text-ink-0">support-ai</p>
-              <p className="text-[10px] text-ink-3">triage · account intelligence</p>
+              <p className="text-[10px] text-ink-3">mission control &middot; triage deck</p>
             </div>
           </div>
 
@@ -84,8 +90,8 @@ export default function App() {
 function StatItem({ icon, value, label }) {
   return (
     <span className="flex items-center gap-1.5">
-      <span className="text-signal">{icon}</span>
-      <span className="font-mono-tight font-medium text-ink-1">{value}</span>
+      <span className="text-radar">{icon}</span>
+      <span className="font-mono-tight font-medium text-radar">{value}</span>
       {label}
     </span>
   );

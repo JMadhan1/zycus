@@ -15,10 +15,18 @@ const HEALTH_COLOR = {
   Churning: "var(--color-p1)",
 };
 
-function Tag({ label, color, mono = true }) {
+function Tag({ label, color, mono = true, critical = false }) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded border border-border bg-surface px-2 py-1">
-      <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
+      <span className="relative flex h-1.5 w-1.5 shrink-0">
+        {critical && (
+          <span
+            className="animate-ping-ring pointer-events-none absolute -inset-1 rounded-full border"
+            style={{ borderColor: color }}
+          />
+        )}
+        <span className="h-1.5 w-1.5 rounded-full" style={{ background: color }} />
+      </span>
       <span className={`text-[11px] font-medium tracking-wide text-ink-1 ${mono ? "font-mono-tight" : ""}`}>
         {label}
       </span>
@@ -27,11 +35,11 @@ function Tag({ label, color, mono = true }) {
 }
 
 export function UrgencyBadge({ value }) {
-  return <Tag label={value} color={TIER_COLOR[value] || "var(--color-ink-3)"} />;
+  return <Tag label={value} color={TIER_COLOR[value] || "var(--color-ink-3)"} critical={value === "P1"} />;
 }
 
 export function SeverityBadge({ value }) {
-  return <Tag label={value.toUpperCase()} color={TIER_COLOR[value] || "var(--color-ink-3)"} />;
+  return <Tag label={value.toUpperCase()} color={TIER_COLOR[value] || "var(--color-ink-3)"} critical={value === "high"} />;
 }
 
 export function HealthBadge({ value }) {
