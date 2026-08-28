@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Near-black canvas, not pure black — a command-console surface, not a void */
+  --color-canvas: #0b0b0d;
+  --color-surface: #131317;
+  --color-surface-raised: #18181d;
+  --color-border: #232329;
+  --color-border-hover: #33333c;
+
+  --color-ink-0: #f5f5f4;
+  --color-ink-1: #d4d4d6;
+  --color-ink-2: #98989f;
+  --color-ink-3: #6c6c74;
+  --color-ink-4: #47474e;
+
+  /* One signal color — warm amber, doubling as the "urgency/triage" motif */
+  --color-signal: #ff8a3d;
+  --color-signal-dim: #a85a28;
+
+  --color-p1: #ff5c5c;
+  --color-p2: #ff8a3d;
+  --color-p3: #e8c547;
+  --color-p4: #4fd1a5;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink-0);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    font-feature-settings: "ss01" 1;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--color-signal) 35%, transparent);
+  }
+}
+
+@layer utilities {
+  .bg-grid {
+    background-image: linear-gradient(to right, color-mix(in oklab, var(--color-ink-0) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--color-ink-0) 4%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: center top;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+  }
+  .font-mono-tight {
+    font-family: var(--font-mono);
+    letter-spacing: -0.01em;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--color-border-hover);
+    border-radius: 999px;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+.animate-blink {
+  animation: blink 1.6s ease-in-out infinite;
+}

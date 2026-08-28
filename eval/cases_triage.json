@@ -1,0 +1,76 @@
+[
+  {
+    "case_id": "triage_01_p1_bug",
+    "description": "Clear-cut critical bug, taken from dataset ticket TKT-10244",
+    "input": {
+      "subject": "Error when accessing Exports in AnalyticsHub",
+      "body": "All 210 users in our organization are unable to access the Exports module in AnalyticsHub since this morning. We get 'ERR_500_INTERNAL' on every attempt. This is blocking our end-of-quarter reporting and is a P1 for us. Environment: Production.",
+      "product": "AnalyticsHub",
+      "plan_tier": "Enterprise"
+    },
+    "acceptance": {
+      "expected_urgency": "P1",
+      "expected_category_any": ["Bug", "Performance"],
+      "requires_kb_match": false
+    }
+  },
+  {
+    "case_id": "triage_02_billing",
+    "description": "Billing/plan question, no urgency language",
+    "input": {
+      "subject": "Question about seat billing on Business plan",
+      "body": "We're on the Business plan and want to understand how seat overages are billed mid-cycle before we add 15 more users. Can you clarify the proration policy?",
+      "product": "DataBridge Pro",
+      "plan_tier": "Business"
+    },
+    "acceptance": {
+      "expected_urgency_any": ["P3", "P4"],
+      "expected_category_any": ["Billing"],
+      "requires_kb_match": true
+    }
+  },
+  {
+    "case_id": "triage_03_sso_kb_match",
+    "description": "Should retrieve the authentication-sso.md knowledge-base doc",
+    "input": {
+      "subject": "SAML SSO login failing for all users after IdP metadata update",
+      "body": "We updated our IdP's SAML metadata yesterday and now no one in our org can log in via SSO. Getting 'invalid_signature' errors. This is blocking our entire team.",
+      "product": "SecureVault",
+      "plan_tier": "Enterprise"
+    },
+    "acceptance": {
+      "expected_urgency_any": ["P1", "P2"],
+      "expected_category_any": ["Bug", "Integration"],
+      "requires_kb_match": true,
+      "expected_kb_doc_contains": "authentication-sso"
+    }
+  },
+  {
+    "case_id": "triage_04_integration_request",
+    "description": "Integration/feature-style request, moderate urgency",
+    "input": {
+      "subject": "Request: bulk run batch import in AnalyticsHub Data Sources",
+      "body": "Currently AnalyticsHub only allows individual batch runs in Data Sources. We need bulk operations since our usage has scaled significantly. Current workaround is manual, one at a time.",
+      "product": "AnalyticsHub",
+      "plan_tier": "Starter"
+    },
+    "acceptance": {
+      "expected_urgency_any": ["P3", "P4"],
+      "expected_category_any": ["Feature Request", "Integration"],
+      "requires_kb_match": false
+    }
+  },
+  {
+    "case_id": "triage_05_adversarial_ambiguous",
+    "description": "ADVERSARIAL: minimal, vague ticket with no product/plan context",
+    "input": {
+      "subject": "not working",
+      "body": "it broke, please fix"
+    },
+    "acceptance": {
+      "expect_valid_schema_only": true,
+      "expect_low_confidence": true,
+      "max_confidence": 0.6
+    }
+  }
+]

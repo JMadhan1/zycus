@@ -1,0 +1,47 @@
+[
+  {
+    "case_id": "account_01_at_risk_with_notes",
+    "description": "At-risk account with 2 escalation notes and 1 recent ticket",
+    "account_id": "ACC-1785",
+    "acceptance": {
+      "min_open_risks": 1,
+      "require_grounded_quotes": true
+    }
+  },
+  {
+    "case_id": "account_02_at_risk_with_notes_2",
+    "description": "Second at-risk account, different company",
+    "account_id": "ACC-3336",
+    "acceptance": {
+      "min_open_risks": 1,
+      "require_grounded_quotes": true
+    }
+  },
+  {
+    "case_id": "account_03_new_no_notes",
+    "description": "New account, no escalation notes, 1 ticket",
+    "account_id": "ACC-5748",
+    "acceptance": {
+      "min_open_risks": 0,
+      "require_grounded_quotes": true
+    }
+  },
+  {
+    "case_id": "account_04_adversarial_no_recent_tickets",
+    "description": "ADVERSARIAL: healthy account with zero tickets in the 90-day window (46/50 accounts in this dataset have no tickets referencing them directly — see README data note). Brief must not fabricate risk.",
+    "account_id": "ACC-3033",
+    "acceptance": {
+      "min_open_risks": 0,
+      "require_grounded_quotes": true,
+      "expect_sparse_data_acknowledged": true
+    }
+  },
+  {
+    "case_id": "account_05_adversarial_unknown_account",
+    "description": "ADVERSARIAL: account_id not present in accounts.json at all",
+    "account_id": "ACC-00000-DOES-NOT-EXIST",
+    "acceptance": {
+      "expect_not_found_error": true
+    }
+  }
+]

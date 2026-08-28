@@ -1,0 +1,363 @@
+{
+  "generated_at": "2026-08-28T04:54:17.519425+00:00",
+  "judge_enabled": true,
+  "summary": {
+    "total_cases": 10,
+    "passed": 8,
+    "failed": 2,
+    "avg_quality_score": 0.916
+  },
+  "determinism_check_task2": {
+    "skipped": false,
+    "identical": true
+  },
+  "task1_triage_results": [
+    {
+      "case_id": "triage_01_p1_bug",
+      "passed": true,
+      "quality_score": 0.95,
+      "rule_checks": {
+        "urgency_match": true,
+        "category_plausible": true,
+        "response_nonempty": true
+      },
+      "judge": {
+        "score": 0.9,
+        "pass": true,
+        "notes": "Draft addresses issue, professional tone, urgency justified."
+      },
+      "notes": [],
+      "output": {
+        "product_area": "AnalyticsHub",
+        "issue_category": "Bug",
+        "urgency": "P1",
+        "urgency_reasoning": "All 210 users are blocked from accessing the Exports module, causing a critical end\u2011of\u2011quarter reporting outage in production.",
+        "kb_match": {
+          "doc_path": "knowledge-base\\products\\analyticshub.md",
+          "section": "AnalyticsHub \u2014 Product Reference",
+          "relevance_score": 0.092,
+          "excerpt": "# AnalyticsHub \u2014 Product Reference\n\n## Overview\n\nAnalyticsHub is a self-serve business intelligence platform that connects to live data sources, enables drag-and-drop dashboard creation, and delivers scheduled reports via email, Slack, or webhook. It is designed for both technical and non-technical users.\n\n**Current stable version:** 3.0.0  \n**Previous stable version:** 2.9.4"
+        },
+        "recommended_responder_team": "Tier-2 Engineering",
+        "draft_first_response": "Hi,\n\nThank you for reporting the issue. We\u2019re aware that the Exports module is returning an ERR_500_INTERNAL error for all users and understand the critical impact on your reporting. Our engineering team is currently investigating the root cause in production and will provide an update as soon as we have more information. In the meantime, if you have any logs or screenshots you can share, that would help us resolve the issue faster. We appreciate your patience and will keep you posted.\n",
+        "confidence": 0.9,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "triage_v1"
+      }
+    },
+    {
+      "case_id": "triage_02_billing",
+      "passed": true,
+      "quality_score": 0.95,
+      "rule_checks": {
+        "urgency_in_range": true,
+        "category_plausible": true,
+        "kb_match_present": true,
+        "response_nonempty": true
+      },
+      "judge": {
+        "score": 0.9,
+        "pass": true,
+        "notes": "The draft first response directly addresses the customer's question about mid-cycle seat overages and proration, provides clear policy details, and offers further assistance. It is professional and concise. The urgency reasoning correctly identifies the request as a moderate priority (P3) with no immediate business impact, which aligns with the urgency tier. Overall, the response meets the quality criteria."
+      },
+      "notes": [],
+      "output": {
+        "product_area": "DataBridge Pro",
+        "issue_category": "Billing",
+        "urgency": "P3",
+        "urgency_reasoning": "The user is requesting clarification on billing policy; no immediate business impact reported, so moderate urgency.",
+        "kb_match": {
+          "doc_path": "knowledge-base\\billing\\billing-and-plans.md",
+          "section": "How Seat Billing Works",
+          "relevance_score": 0.3239,
+          "excerpt": "## How Seat Billing Works\n\nA **seat** is any user account that was active (logged in or made an API call) at least once during the billing period.\n\n- Seats are counted at the end of each billing month.\n- Adding users mid-month is prorated to the day.\n- Deactivating a user does **not** immediately free the seat \u2014 the account is counted until the billing month closes.\n- **Overage:** if active users exceed the purchased seat count, overage is billed at 1.5\u00d7 the per-seat rate.\n\n**Common billing query:** \"We're being charged for N seats but only have M active users.\"\n\nResolution steps:\n1. Export\u2026"
+        },
+        "recommended_responder_team": "Billing Support",
+        "draft_first_response": "Hi, thanks for reaching out. According to our \"How Seat Billing Works\" guide, seats are counted at the end of each billing month and any users added mid\u2011month are prorated to the day. If your active users exceed the purchased seat count, the overage is billed at 1.5\u00d7 the per\u2011seat rate. Adding 15 more users before the month ends will be prorated accordingly, and the overage will be reflected in your next invoice. If you\u2019d like a detailed estimate or have further questions, let us know and we\u2019ll calculate the exact cost for you.",
+        "confidence": 0.95,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "triage_v1"
+      }
+    },
+    {
+      "case_id": "triage_03_sso_kb_match",
+      "passed": true,
+      "quality_score": 0.95,
+      "rule_checks": {
+        "urgency_in_range": true,
+        "category_plausible": true,
+        "kb_match_present": true,
+        "kb_doc_correct": true,
+        "response_nonempty": true
+      },
+      "judge": {
+        "score": 0.9,
+        "pass": true,
+        "notes": "The draft first response acknowledges the issue, offers relevant troubleshooting steps, maintains a professional tone, and indicates prompt action, which aligns with the P1 urgency tier."
+      },
+      "notes": [],
+      "output": {
+        "product_area": "Authentication",
+        "issue_category": "Integration",
+        "urgency": "P1",
+        "urgency_reasoning": "All users are blocked from SSO login, preventing business operations. The error indicates a critical failure in the SSO integration after an IdP metadata update.",
+        "kb_match": {
+          "doc_path": "knowledge-base\\troubleshooting\\authentication-sso.md",
+          "section": "SSO Setup Checklist",
+          "relevance_score": 0.2486,
+          "excerpt": "## SSO Setup Checklist\n\nBefore opening a support ticket for SSO issues, confirm all of the following:\n\n- [ ] SAML metadata XML is current (not expired)\n- [ ] ACS URL in IDP matches exactly: `https://[product].yourdomain.com/sso/saml/callback`\n- [ ] Entity ID in IDP matches exactly: `https://[product].yourdomain.com`\n- [ ] At least one group mapping exists in the product SSO settings\n- [ ] System clocks on IDP and service provider are synchronised (NTP)\n- [ ] The user's IDP group is mapped to a product role\n- [ ] Password login fallback is enabled for emergency admin access"
+        },
+        "recommended_responder_team": "Platform Engineering",
+        "draft_first_response": "Hi,\nThank you for reaching out. I\u2019m sorry to hear that the recent IdP metadata update has caused an \u2018invalid_signature\u2019 error for all users. According to our SSO Setup Checklist (KB: troubleshooting/authentication-sso.md), please verify that the new metadata XML is current, the ACS URL and Entity ID match exactly, and that system clocks on both the IdP and SecureVault are synchronized. If those settings are correct, we\u2019ll investigate the signature validation on our side and work to restore access as quickly as possible. I\u2019ll keep you updated and will reach out if we need additional details.\nBest regards,\nSupport Team",
+        "confidence": 0.92,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "triage_v1"
+      }
+    },
+    {
+      "case_id": "triage_04_integration_request",
+      "passed": false,
+      "quality_score": 0.758,
+      "rule_checks": {
+        "urgency_in_range": false,
+        "category_plausible": true,
+        "response_nonempty": true
+      },
+      "judge": {
+        "score": 0.85,
+        "pass": true,
+        "notes": "The draft first response acknowledges the customer's request for bulk batch imports, explains that it is a feature request, and offers a professional tone. It also invites additional details to help prioritize. The urgency reasoning justifies a P2 tier by highlighting the significant impact on workflow efficiency due to manual workarounds. Overall, the response is appropriate and meets the criteria."
+      },
+      "notes": [],
+      "output": {
+        "product_area": "AnalyticsHub",
+        "issue_category": "Feature Request",
+        "urgency": "P2",
+        "urgency_reasoning": "The customer reports that manual, one\u2011by\u2011one batch imports are a significant workaround due to increased usage, indicating a major impact on workflow efficiency.",
+        "kb_match": {
+          "doc_path": "knowledge-base\\products\\analyticshub.md",
+          "section": "AnalyticsHub \u2014 Product Reference",
+          "relevance_score": 0.1443,
+          "excerpt": "# AnalyticsHub \u2014 Product Reference\n\n## Overview\n\nAnalyticsHub is a self-serve business intelligence platform that connects to live data sources, enables drag-and-drop dashboard creation, and delivers scheduled reports via email, Slack, or webhook. It is designed for both technical and non-technical users.\n\n**Current stable version:** 3.0.0  \n**Previous stable version:** 2.9.4"
+        },
+        "recommended_responder_team": "Product Team",
+        "draft_first_response": "Hi there,\nThank you for reaching out. I understand that bulk batch imports would greatly improve your workflow as your usage scales. This is a feature request, and we\u2019ll add it to our product backlog for review. In the meantime, you can continue using the current manual process, and we\u2019ll keep you updated on any progress. If you have any additional details or use\u2011case examples, please share them so we can prioritize effectively.\nBest regards,\nYour Support Team",
+        "confidence": 0.95,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "triage_v1"
+      }
+    },
+    {
+      "case_id": "triage_05_adversarial_ambiguous",
+      "passed": true,
+      "quality_score": 0.95,
+      "rule_checks": {
+        "valid_schema": true,
+        "low_confidence_as_expected": true,
+        "response_nonempty": true
+      },
+      "judge": {
+        "score": 0.9,
+        "pass": true,
+        "notes": "The response acknowledges the issue, maintains professionalism, and appropriately requests additional details to assess impact, aligning with the moderate urgency tier justified by the lack of specifics."
+      },
+      "notes": [],
+      "output": {
+        "product_area": "Platform",
+        "issue_category": "Bug",
+        "urgency": "P3",
+        "urgency_reasoning": "The user reports a generic failure but provides no details; we cannot assess criticality or impact, so a moderate urgency is appropriate pending more information.",
+        "kb_match": {
+          "doc_path": "knowledge-base\\troubleshooting\\performance-and-integrations.md",
+          "section": "Common Integration Errors",
+          "relevance_score": 0.0994,
+          "excerpt": "## Common Integration Errors\n\n| Error | Integration | Cause | Fix |\n|-------|------------|-------|-----|\n| `403 Forbidden` | Salesforce | OAuth token lacks `api` scope | Regenerate token with correct scopes |\n| `404 Not Found` on valid endpoint | Any REST | API version mismatch | Confirm API version in connector config |\n| Webhook not received | All | Endpoint not reachable from cloud | Whitelist platform IP ranges |\n| `CHECKSUM_MISMATCH` | DataBridge Pro | Data corruption or wrong key | Verify encryption key; contact support |\n| `INVALID_CONFIGURATION` | WorkflowEngine | Missing required\u2026"
+        },
+        "recommended_responder_team": "Tier-2 Engineering",
+        "draft_first_response": "Hi,\nThank you for reaching out. We\u2019re sorry to hear that the service isn\u2019t working as expected. Could you please provide more details such as the specific feature you\u2019re using, any error messages you see, and when the issue started? This will help us diagnose the problem quickly.\nThanks for your cooperation!",
+        "confidence": 0.4,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "triage_v1"
+      }
+    }
+  ],
+  "task2_account_brief_results": [
+    {
+      "case_id": "account_01_at_risk_with_notes",
+      "passed": true,
+      "quality_score": 0.925,
+      "rule_checks": {
+        "min_open_risks_met": true,
+        "risks_have_quotes": true,
+        "summary_nonempty": true
+      },
+      "judge": {
+        "score": 0.85,
+        "pass": true,
+        "notes": "Executive summary is specific, includes key metrics and risk drivers. Talking points are concrete and actionable. Risks are plausible, though the negative sentiment risk is not explicitly mentioned in the summary but still reasonable given the ticket data. Overall quality is high."
+      },
+      "notes": [],
+      "output": {
+        "account_id": "ACC-1785",
+        "company": "Cyberdyne Systems",
+        "executive_summary": "Cyberdyne Systems is currently marked as At Risk, primarily due to a procurement request for a pricing review. The account has 563 active seats out of 610 licensed, indicating high utilization but a 47\u2011day gap since the last login, which may signal declining engagement. Usage trends are stable, and the renewal is not until May 2027, giving ample time to address concerns. The single most critical fact for the upcoming call is the procurement team\u2019s request for a pricing review.",
+        "open_risks": [
+          {
+            "risk": "Pricing review requested by procurement team",
+            "evidence_quote": "Procurement team requested pricing review",
+            "source_ticket_id": null,
+            "severity": "high"
+          },
+          {
+            "risk": "Negative sentiment detected in recent support tickets",
+            "evidence_quote": "Negative sentiment detected in recent support tickets",
+            "source_ticket_id": null,
+            "severity": "medium"
+          }
+        ],
+        "talking_points": [
+          "Discuss the procurement team\u2019s pricing review request and explore potential adjustments or tier changes to retain the account.",
+          "Address the negative sentiment noted in support tickets, even though only one ticket was logged, and confirm satisfaction with the recent resolution.",
+          "Highlight the high seat utilization (92%) and discuss opportunities for expanding usage or adding value through additional features of SecureVault.",
+          "Review the 47\u2011day inactivity since last login and propose engagement initiatives to re\u2011activate the platform for the Engineering team.",
+          "Re\u2011affirm the renewal timeline (May 2027) and outline next steps to secure the account before the renewal date."
+        ],
+        "tickets_analyzed": 1,
+        "window_days": 90,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "account_brief_v1"
+      }
+    },
+    {
+      "case_id": "account_02_at_risk_with_notes_2",
+      "passed": true,
+      "quality_score": 0.9,
+      "rule_checks": {
+        "min_open_risks_met": true,
+        "risks_have_quotes": true,
+        "summary_nonempty": true
+      },
+      "judge": {
+        "score": 0.8,
+        "pass": true,
+        "notes": "Executive summary is specific and useful, talking points are concrete and actionable. Risks are plausible for churn but the competitive vendor risk lacks supporting evidence in the summary, slightly lowering overall confidence."
+      },
+      "notes": [],
+      "output": {
+        "account_id": "ACC-3336",
+        "company": "Omni Consumer Products",
+        "executive_summary": "Omni Consumer Products is currently marked as At Risk, primarily due to 3 consecutive P1 tickets in the last 30 days. The account has a high seat utilization of 91.7% (1693 active seats out of 1845 licensed) but shows an inactive usage trend, with the last login only 5 days ago. ARR stands at $500,000 and the renewal is due on 2026-08-19, just 21 days after the last QBR. The primary contact is VP Technology Quinn Wilson, and the only recent ticket indicates significant performance degradation in DataBridge Pro.",
+        "open_risks": [
+          {
+            "risk": "High churn risk due to consecutive P1 tickets",
+            "evidence_quote": "3 consecutive P1 tickets in the last 30 days",
+            "source_ticket_id": null,
+            "severity": "high"
+          },
+          {
+            "risk": "Competitive vendor evaluation by decision maker",
+            "evidence_quote": "Decision maker considering competing vendor evaluation",
+            "source_ticket_id": null,
+            "severity": "high"
+          }
+        ],
+        "talking_points": [
+          "Address the DataBridge Pro performance issue and confirm resolution steps with the support team.",
+          "Discuss seat utilization and explore potential cost savings or reallocation of unused seats.",
+          "Highlight the upcoming renewal date and propose a tailored engagement plan to mitigate churn.",
+          "Emphasize differentiation against competitors and outline unique value propositions for the Energy sector.",
+          "Review the inactive usage trend and recommend targeted training or feature adoption initiatives to boost engagement."
+        ],
+        "tickets_analyzed": 1,
+        "window_days": 90,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "account_brief_v1"
+      }
+    },
+    {
+      "case_id": "account_03_new_no_notes",
+      "passed": true,
+      "quality_score": 0.95,
+      "rule_checks": {
+        "min_open_risks_met": true,
+        "risks_have_quotes": true,
+        "summary_nonempty": true
+      },
+      "judge": {
+        "score": 0.9,
+        "pass": true,
+        "notes": "Executive summary is specific and actionable; talking points are concrete; risk is plausible given the summary."
+      },
+      "notes": [],
+      "output": {
+        "account_id": "ACC-5748",
+        "company": "Nexus Data",
+        "executive_summary": "Nexus Data is a new Starter tier customer with ARR of $120k, 194 active seats out of 379 licensed, and a growing usage trend. The account recently resolved a high\u2011priority performance ticket that impacted dashboard load times, indicating active engagement. With only 7 open tickets and no P1 incidents in the last 30 days, the overall health remains positive. The upcoming board presentation and the need for a quick resolution of the dashboard issue should be a key focus for the call.",
+        "open_risks": [
+          {
+            "risk": "Performance issue with SecureVault dashboard load times",
+            "evidence_quote": "Dashboard loading times unacceptable \u2014 SecureVault",
+            "source_ticket_id": "TKT-10197",
+            "severity": "medium"
+          }
+        ],
+        "talking_points": [
+          "Confirm resolution of the SecureVault dashboard performance issue and verify that load times are back to acceptable levels; ask if the board presentation went smoothly.",
+          "Discuss the increasing usage trend and explore opportunities to expand seat utilization from 194 active seats to the full 379 licensed seats, especially for the AnalyticsHub product.",
+          "Review integration status with HubSpot and Zendesk, ensuring data flows are stable and identifying any potential gaps that could affect future adoption.",
+          "Outline the renewal timeline (March 2027) and discuss any upcoming feature releases or pricing changes that could influence the customer's decision.",
+          "Gather NPS feedback or ask for a quick satisfaction score to gauge overall sentiment, as no NPS score is currently available."
+        ],
+        "tickets_analyzed": 1,
+        "window_days": 90,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "account_brief_v1"
+      }
+    },
+    {
+      "case_id": "account_04_adversarial_no_recent_tickets",
+      "passed": false,
+      "quality_score": 0.825,
+      "rule_checks": {
+        "min_open_risks_met": true,
+        "risks_have_quotes": true,
+        "sparse_data_acknowledged": false,
+        "summary_nonempty": true
+      },
+      "judge": {
+        "score": 0.9,
+        "pass": true,
+        "notes": "Executive summary is specific and actionable; talking points are concrete; no risks listed but potential risk of support satisfaction is implied and plausible."
+      },
+      "notes": [],
+      "output": {
+        "account_id": "ACC-3033",
+        "company": "Polaris Group",
+        "executive_summary": "Polaris Group is healthy with increasing usage; the most important fact for the call is that there are 11 open tickets, all older than 90 days, which could impact support satisfaction.",
+        "open_risks": [],
+        "talking_points": [
+          "Address the 11 open tickets older than 90 days: confirm status, plan resolution, and impact on support satisfaction.",
+          "Highlight seat utilization: 925 active seats out of 1049 licensed (~88%) and discuss potential for optimizing seat allocation or upsell.",
+          "Discuss usage trend: increasing usage of DataBridge Pro and integration with Google Workspace and Jira; explore advanced features or training opportunities.",
+          "Review upcoming renewal: 2026-06-30, discuss renewal strategy, potential upsell or expansion, and ensure alignment with business goals.",
+          "Check last login 57 days ago: encourage engagement, propose a quick health check or demo to maintain momentum."
+        ],
+        "tickets_analyzed": 0,
+        "window_days": 90,
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "account_brief_v1"
+      }
+    },
+    {
+      "case_id": "account_05_adversarial_unknown_account",
+      "passed": true,
+      "quality_score": 1.0,
+      "rule_checks": {
+        "raised_not_found": true
+      },
+      "judge": null,
+      "notes": [],
+      "output": null
+    }
+  ]
+}
