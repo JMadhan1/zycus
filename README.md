@@ -79,21 +79,21 @@ cd ui/frontend && npm install && npm run dev            # terminal 2 — http://
 
 ```mermaid
 flowchart LR
-    T[Raw ticket]
-    A[Account ID]
+    T([Raw ticket])
+    A([Account ID])
 
-    subgraph Retrieval["Local retrieval — no external calls"]
+    subgraph Retrieval["🟢 Local retrieval — no external calls"]
         KB[("Knowledge base<br/>9 markdown docs")]
         TFIDF["TF-IDF cosine<br/>kb_retrieval.py"]
         KB --> TFIDF
     end
 
-    subgraph LLM["Groq · openai/gpt-oss-20b"]
+    subgraph LLMBOX["🟠 Groq · openai/gpt-oss-20b"]
         Triage["triage.py<br/>classification + draft"]
         Brief["account_brief.py<br/>summary + risk flags"]
     end
 
-    subgraph Guardrails
+    subgraph Guardrails["🔴 Guardrails"]
         Cache[("content-hash cache<br/>determinism")]
         Ground["quote-grounding check<br/>rejects fabricated quotes"]
     end
@@ -105,72 +105,109 @@ flowchart LR
     Triage <--> Cache
     Brief <--> Cache
     Brief --> Ground
-    Triage --> Out1["TriageOutput"]
-    Ground --> Out2["AccountBrief"]
+    Triage --> Out1(["TriageOutput"])
+    Ground --> Out2(["AccountBrief"])
 
     Out1 --> API["FastAPI"]
     Out2 --> API
     API --> UI["React UI"]
     API --> Eval["eval.harness<br/>rule-based + LLM-as-judge"]
+
+    classDef input fill:#3b82f6,stroke:#1d4ed8,color:#fff,font-weight:bold
+    classDef local fill:#22c55e,stroke:#15803d,color:#fff,font-weight:bold
+    classDef llm fill:#ff8a3d,stroke:#c2410c,color:#1a0f00,font-weight:bold
+    classDef guard fill:#ef4444,stroke:#991b1b,color:#fff,font-weight:bold
+    classDef output fill:#a855f7,stroke:#6b21a8,color:#fff,font-weight:bold
+    classDef infra fill:#64748b,stroke:#334155,color:#fff,font-weight:bold
+
+    class T,A input
+    class KB,TFIDF,Data local
+    class Triage,Brief llm
+    class Cache,Ground guard
+    class Out1,Out2 output
+    class API,UI,Eval infra
 ```
+
+🔵 input &nbsp;·&nbsp; 🟢 local / no external calls &nbsp;·&nbsp; 🟠 Groq LLM call &nbsp;·&nbsp; 🔴 guardrail / validation &nbsp;·&nbsp; 🟣 typed output &nbsp;·&nbsp; ⚪ infra
 
 ### Task 1 — ticket triage, request to response
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#18181d','actorBorder':'#33333c','actorTextColor':'#f5f5f4','signalColor':'#98989f','signalTextColor':'#f5f5f4','noteBkgColor':'#232329','noteTextColor':'#f5f5f4','noteBorderColor':'#33333c'}}}%%
 sequenceDiagram
-    participant U as React UI
-    participant API as FastAPI · /triage
-    participant KB as kb_retrieval.py<br/>(local TF-IDF)
-    participant Cache as content-hash cache
-    participant LLM as Groq · gpt-oss-20b
+    participant U as 🔵 React UI
+    participant API as ⚪ FastAPI · /triage
+    participant KB as 🟢 kb_retrieval.py<br/>(local TF-IDF)
+    participant Cache as 🔴 content-hash cache
+    participant LLM as 🟠 Groq · gpt-oss-20b
 
     U->>API: POST /triage {subject, body, product?, plan_tier?}
+
+    rect rgba(34, 197, 94, 0.15)
     API->>KB: retrieve(subject + body, top_k=3)
     KB-->>API: ranked KB chunks + relevance scores
+    end
+
     API->>Cache: lookup(hash(model, temp, seed, prompt))
     alt cache hit
         Cache-->>API: cached classification JSON
     else cache miss
+        rect rgba(255, 138, 61, 0.18)
         API->>LLM: classify + draft response<br/>(JSON mode, temperature=0, seed=42)
         LLM-->>API: raw JSON
+        end
         API->>Cache: store(hash, JSON)
     end
+
     API-->>U: TriageOutput — urgency, category,<br/>kb_match, responder team, draft response
 ```
 
 ### Task 2 — account brief, request to response
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'actorBkg':'#18181d','actorBorder':'#33333c','actorTextColor':'#f5f5f4','signalColor':'#98989f','signalTextColor':'#f5f5f4','noteBkgColor':'#232329','noteTextColor':'#f5f5f4','noteBorderColor':'#33333c'}}}%%
 sequenceDiagram
-    participant U as React UI
-    participant API as FastAPI · /accounts/{id}/brief
-    participant Data as data_loader.py
-    participant Cache as content-hash cache
-    participant LLM as Groq · gpt-oss-20b
-    participant Ground as _is_grounded() check
+    participant U as 🔵 React UI
+    participant API as ⚪ FastAPI · /accounts/{id}/brief
+    participant Data as 🟢 data_loader.py
+    participant Cache as 🔴 content-hash cache
+    participant LLM as 🟠 Groq · gpt-oss-20b
+    participant Ground as 🔴 _is_grounded() check
 
     U->>API: GET /accounts/ACC-1785/brief
+
+    rect rgba(34, 197, 94, 0.15)
     API->>Data: get_account(id) + get_account_tickets(id, 90d)
     Note right of Data: 90-day window anchored to the<br/>dataset's own latest ticket, not now()
     Data-->>API: account fields + matching tickets
+    end
+
     API->>Cache: lookup(hash(model, temp, seed, prompt))
     alt cache hit
         Cache-->>API: cached brief JSON
     else cache miss
+        rect rgba(255, 138, 61, 0.18)
         API->>LLM: summarize + flag risks<br/>(JSON mode, temperature=0, seed=42)
         LLM-->>API: raw JSON — summary, risks, talking points
+        end
         API->>Cache: store(hash, JSON)
     end
+
+    rect rgba(239, 68, 68, 0.15)
     API->>Ground: for each risk, is evidence_quote a verbatim<br/>substring of ticket/escalation-note text?
     Ground-->>API: risks with fabricated quotes dropped
+    end
+
     API-->>U: AccountBrief
 ```
+
+🔵 input / UI &nbsp;·&nbsp; ⚪ API layer &nbsp;·&nbsp; 🟢 local, no external call &nbsp;·&nbsp; 🟠 Groq LLM call &nbsp;·&nbsp; 🔴 guardrail (cache / grounding check)
 
 ### Eval harness flow
 
 ```mermaid
 flowchart TD
-    Cases["cases_triage.json<br/>cases_account_brief.json<br/>10 cases, 5+/task, ≥1 adversarial/task"] --> Run["harness.py — run each case"]
+    Cases["📋 cases_triage.json<br/>cases_account_brief.json<br/>10 cases, 5+/task, ≥1 adversarial/task"] --> Run["harness.py — run each case"]
     Run --> P1["triage_ticket()"]
     Run --> P2["account_health_brief()"]
     P1 --> R1["Rule checks:<br/>schema · enum · expected value · KB match"]
@@ -179,11 +216,27 @@ flowchart TD
     R2 --> Gate
     Gate -- yes --> Judge["LLM-as-judge<br/>scores 0.0-1.0, pass ≥ 0.6"]
     Gate -- no --> Skip["quality_score = rule pass-rate only<br/>(judge skipped, noted in report)"]
-    Judge --> Report["eval_report.json / eval_report.md<br/>pass/fail + quality_score per case"]
+    Judge --> Report["📊 eval_report.json / eval_report.md<br/>pass/fail + quality_score per case"]
     Skip --> Report
     Run --> Det["run_determinism_check()<br/>same account brief, called twice"]
     Det --> Report
+
+    classDef cases fill:#3b82f6,stroke:#1d4ed8,color:#fff,font-weight:bold
+    classDef pipeline fill:#64748b,stroke:#334155,color:#fff,font-weight:bold
+    classDef rules fill:#22c55e,stroke:#15803d,color:#fff,font-weight:bold
+    classDef gate fill:#ef4444,stroke:#991b1b,color:#fff,font-weight:bold
+    classDef judge fill:#ff8a3d,stroke:#c2410c,color:#1a0f00,font-weight:bold
+    classDef report fill:#a855f7,stroke:#6b21a8,color:#fff,font-weight:bold
+
+    class Cases cases
+    class Run,P1,P2,Det pipeline
+    class R1,R2 rules
+    class Gate gate
+    class Judge,Skip judge
+    class Report report
 ```
+
+🔵 test cases &nbsp;·&nbsp; ⚪ pipeline call &nbsp;·&nbsp; 🟢 rule-based checks &nbsp;·&nbsp; 🔴 gate &nbsp;·&nbsp; 🟠 LLM-as-judge &nbsp;·&nbsp; 🟣 report output
 
 ### Repo structure
 
