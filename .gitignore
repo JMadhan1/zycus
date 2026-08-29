@@ -11,3 +11,6 @@ venv/
 ui/frontend/node_modules/
 ui/frontend/dist/
 
+# recording notes — local reference only, never pushed
+LOOM_SCRIPT.md
+
