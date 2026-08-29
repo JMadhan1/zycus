@@ -13,6 +13,8 @@
 
 <p align="center">
   <a href="https://zycus.jmadhan.me"><img alt="Live demo" src="https://img.shields.io/badge/%E2%97%8F%20LIVE%20DEMO-zycus.jmadhan.me-ff8a3d?style=for-the-badge&labelColor=0b0b0d"></a>
+  &nbsp;
+  <a href="https://www.loom.com/share/df1d74611cd84ae9a8f34656683801c2"><img alt="Loom walkthrough" src="https://img.shields.io/badge/%E2%96%B6%20WALKTHROUGH-Loom%20video-635bff?style=for-the-badge&labelColor=0b0b0d"></a>
 </p>
 
 <p align="center">
@@ -22,6 +24,8 @@
 
 <p align="center">
   <b><a href="https://zycus.jmadhan.me">🔴 Try it live → zycus.jmadhan.me</a></b>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <b><a href="https://www.loom.com/share/df1d74611cd84ae9a8f34656683801c2">▶ Watch the walkthrough</a></b>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   frontend on Vercel, backend on <a href="https://zycus-support-ai-api.onrender.com/health">Render</a> — both deployed, both real
 </p>
