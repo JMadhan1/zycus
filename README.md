@@ -466,5 +466,5 @@ this repo.
 ---
 
 <p align="center">
-  <sub>Built for the Zycus US Delivery Internship — Technical Task Round. See <a href="LOOM_SCRIPT.md">LOOM_SCRIPT.md</a> for the walkthrough outline.</sub>
+  <sub>Built for the Zycus US Delivery Internship — Technical Task Round.</sub>
 </p>
