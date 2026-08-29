@@ -1,8 +1,16 @@
-// Local dev: no env var set, falls back to "/api" which vite.config.js proxies
-// to localhost:8000 (stripping the /api prefix). Production (Vercel): set
-// VITE_API_BASE_URL to the deployed backend's origin (e.g. Render), no
-// trailing slash — requests go straight to it, no proxy involved.
-const BASE = import.meta.env.VITE_API_BASE_URL || "/api";
+// VITE_API_BASE_URL is the correct way to point this at a backend and
+// should be set in Vercel's project settings. But Vite only bakes env vars
+// in at BUILD time — if it's missing or the build ran before it was set,
+// "/api" silently resolves to nothing on a static host (no dev proxy exists
+// in production) and every request 405s against Vercel's own SPA rewrite.
+// So the fallback branches on dev vs. prod instead of always being "/api":
+// dev falls back to the vite.config.js proxy (-> localhost:8000), a
+// production build with no env var set falls back to the known deployed
+// backend directly, so a missed Vercel env var degrades to "still works"
+// instead of "silently broken".
+const BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? "/api" : "https://zycus-support-ai-api.onrender.com");
 
 async function request(path, options) {
   const res = await fetch(`${BASE}${path}`, options);
